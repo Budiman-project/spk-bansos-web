@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react'
-import { THEMES, THEME_LIST, applyTheme, loadThemeId, saveThemeId } from './themes.js'
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { PRINT_THEME_ID, THEMES, THEME_LIST, applyTheme, loadThemeId, saveThemeId } from './themes.js'
 
 const ThemeContext = createContext(null)
 
@@ -7,6 +7,18 @@ export function ThemeProvider({ children }) {
   const [themeId, setThemeIdState] = useState(loadThemeId)
 
   useLayoutEffect(() => applyTheme(themeId), [themeId])
+
+  // Print in the light theme, then switch back to the user's own
+  useEffect(() => {
+    const toPrint = () => applyTheme(PRINT_THEME_ID)
+    const back = () => applyTheme(themeId)
+    window.addEventListener('beforeprint', toPrint)
+    window.addEventListener('afterprint', back)
+    return () => {
+      window.removeEventListener('beforeprint', toPrint)
+      window.removeEventListener('afterprint', back)
+    }
+  }, [themeId])
 
   const setThemeId = useCallback((id) => {
     if (!(id in THEMES)) return

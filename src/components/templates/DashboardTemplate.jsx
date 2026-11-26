@@ -12,9 +12,9 @@ export default function DashboardTemplate() {
     <div className="min-h-svh">
       <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 print:pl-0">
         <Topbar onOpenMenu={() => setMenuOpen(true)} />
-        <main className="p-4 sm:p-6 lg:p-8">
+        <main className="p-4 sm:p-6 lg:p-8 print:p-0">
           <Outlet />
         </main>
       </div>

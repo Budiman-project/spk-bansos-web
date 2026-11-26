@@ -11,6 +11,7 @@ import DashboardPage from './pages/DashboardPage.jsx'
 import HasilPage from './pages/HasilPage.jsx'
 import KkPage from './pages/KkPage.jsx'
 import KriteriaPage from './pages/KriteriaPage.jsx'
+import LaporanPage from './pages/LaporanPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import PerhitunganPage from './pages/PerhitunganPage.jsx'
@@ -33,6 +34,7 @@ const PAGES = {
   verifikasi: <VerifikasiPage />,
   perhitungan: <PerhitunganPage />,
   hasil: <HasilPage />,
+  laporan: <LaporanPage />,
   pengaturan: <SettingsPage />,
 }
 

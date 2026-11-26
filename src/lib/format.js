@@ -11,6 +11,11 @@ export function formatTanggal(iso) {
   })
 }
 
+// Date for official documents: → "24 November 2026"
+export function formatTanggalPanjang(date) {
+  return new Date(date).toLocaleDateString('id-ID', { dateStyle: 'long' })
+}
+
 // Plain number in Indonesian notation, up to 3 decimals: 4.3333 → "4,333", 4.5 → "4,5"
 export function formatAngka(value) {
   return value.toLocaleString('id-ID', { maximumFractionDigits: 3 })

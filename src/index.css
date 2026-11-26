@@ -21,6 +21,12 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Browser print / Save as PDF (Laporan menu): A4 paper */
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
 @layer base {
   body {
     @apply bg-background text-fg antialiased;

@@ -104,6 +104,9 @@ export const THEME_LIST = Object.values(THEMES)
 
 export const DEFAULT_THEME_ID = 'formal'
 
+// Printing (Ctrl+P → Save as PDF) always uses this light theme, so a dark theme never prints light text
+export const PRINT_THEME_ID = 'formal'
+
 export const THEME_STORAGE_KEY = 'spk-bansos:theme'
 
 export function themeVar(token) {

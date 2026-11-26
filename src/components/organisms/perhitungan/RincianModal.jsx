@@ -20,7 +20,7 @@ export default function RincianModal({ perhitungan, hasil, onClose }) {
       onClose={onClose}
       labelledBy={titleId}
     >
-      <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
+      <div className="flex items-start justify-between gap-4 border-b border-border px-4 py-4 sm:px-6">
         <div>
           <h2 id={titleId} className="text-lg font-semibold">
             Rincian Perhitungan · {hasil.kk.kepalaKeluarga}
@@ -39,7 +39,7 @@ export default function RincianModal({ perhitungan, hasil, onClose }) {
         </button>
       </div>
 
-      <div className="space-y-4 px-6 py-5">
+      <div className="space-y-4 px-4 py-5 sm:px-6">
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <span className="font-semibold">
             Ranking {hasil.ranking} dari {perhitungan.jumlahAlternatif}
@@ -48,7 +48,48 @@ export default function RincianModal({ perhitungan, hasil, onClose }) {
           <span className="text-fg-muted">Kuota {perhitungan.periode.kuota} KK</span>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-border">
+        {/* Phones: one block per criterion, the whole X → r → w × r chain visible without scrolling */}
+        <ul className="divide-y divide-border rounded-lg border border-border md:hidden">
+          {rows.map((row) => (
+            <li
+              key={row.kode}
+              className="space-y-1.5 px-3 py-2.5 text-sm"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="font-medium">
+                  {row.kode} · {row.nama}
+                </p>
+                <span className="shrink-0 text-xs text-fg-muted">{SIFAT[row.sifat].label}</span>
+              </div>
+              <dl className="space-y-1 font-mono text-xs">
+                <div className="flex justify-between gap-3">
+                  <dt className="font-sans text-fg-muted">Nilai X</dt>
+                  <dd>{formatAngka(row.x)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="font-sans text-fg-muted">Normalisasi r</dt>
+                  <dd className="text-right">
+                    <span className="text-fg-muted">{row.rumus} = </span>
+                    {formatDesimal(row.r)}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="font-sans text-fg-muted">w × r</dt>
+                  <dd className="text-right">
+                    <span className="text-fg-muted">{formatBobot(row.bobot)} × {formatDesimal(row.r)} = </span>
+                    {formatDesimal(row.kontribusi)}
+                  </dd>
+                </div>
+              </dl>
+            </li>
+          ))}
+          <li className="flex items-center justify-between gap-3 bg-surface-alt px-3 py-2.5 text-sm font-semibold">
+            <span>V = Σ (w × r)</span>
+            <span className="font-mono">{formatDesimal(hasil.nilaiV)}</span>
+          </li>
+        </ul>
+
+        <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border bg-surface-alt text-xs font-semibold tracking-wide text-fg-muted uppercase">
               <tr>
@@ -96,7 +137,7 @@ export default function RincianModal({ perhitungan, hasil, onClose }) {
         {hasil.seri && <p className="text-xs text-warning">Nilai V sama dengan KK lain. {ATURAN_SERI}</p>}
       </div>
 
-      <div className="flex justify-end border-t border-border px-6 py-4">
+      <div className="flex justify-end border-t border-border px-4 py-4 sm:px-6">
         <Button variant="secondary" onClick={onClose}>
           Tutup
         </Button>

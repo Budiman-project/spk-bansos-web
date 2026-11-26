@@ -45,6 +45,7 @@ src/lib/periode.js    pilihPeriode(list, selectedId) (default: open, else newest
 src/lib/perhitungan.js kesiapanPerhitungan({ periode, ringkasan, totalBobot }) → { items, siap } (checklist before a
                       SAW run), rincianHasil(kriteria, hasil) → per-criterion X, r, rumus, w·r; rumusNormalisasi;
                       ATURAN_SERI (provisional tie-break text, keep in sync with the API's saw.js)
+src/lib/image.js      compressPhoto(file) → resized JPEG File for upload (original when already small)
 src/lib/survei.js     STATUS_SURVEI (label, tone), PROGRESS_SEGMENTS + BELUM_DISURVEI (progress bar), JENIS_FOTO,
                       FOTO_TYPES, MAX_FOTO_BYTES, fotoUrl(surveiId, fotoId)
 src/auth/             AuthProvider (useAuth: status, user, login, logout, refreshUser; restores session via /auth/me),
@@ -77,7 +78,8 @@ organisms/   self-contained sections; generic ones at the top level (Modal size 
              kriteria/ (KriteriaTable, KuesionerSection, Kriteria/Bobot/Pertanyaan/OpsiFormModal),
              survei/ (MulaiSurveiModal, SurveiWizard → PertanyaanStep, FotoStep, RingkasanStep),
              verifikasi/ (JawabanReview, FotoGallery, VerifikasiFormModal),
-             perhitungan/ (KesiapanCard, KriteriaSawTable, RankingTable, RincianModal = per-KK X → r → w·r → V)
+             perhitungan/ (KesiapanCard, KriteriaSawTable, RankingTable, RincianModal = per-KK X → r → w·r → V),
+             laporan/ (LaporanDokumen = printable A4 report of one run)
 templates/   page skeletons without data: DashboardTemplate (route element: sidebar + header + <Outlet/>),
              PageTemplate (title/description/actions + content column), AuthTemplate (login split screen),
              StatusTemplate (403/404)
@@ -99,6 +101,11 @@ legend/label and the exact counts as text; text never takes the segment color.
 SAW pages (desa): `/desa/perhitungan` (PerhitunganPage: readiness checklist, run, history) and `/desa/hasil`
 (HasilPage: the periode's latest run, or `?perhitungan=<id>` for an earlier one; ranking + RincianModal).
 The frontend never recomputes SAW; it only displays the stored snapshot (X, R, V, min/max, bobot).
+`/desa/laporan` (LaporanPage, `?periode=<id>`): the periode's latest run as an official document, exported
+with the browser print dialog (window.print → Save as PDF / Microsoft Print to PDF), as the Laporan Akhir
+describes; no server-side PDF. Print support: Sidebar/Topbar/Toast are `print:hidden`, `PageTemplate`
+`hideHeaderOnPrint` hides a page's header, `@page` A4 in index.css, and ThemeProvider switches to
+`PRINT_THEME_ID` (light) on `beforeprint` and back on `afterprint`.
 
 Survei form: answers are not shown with their scores to the RT (the answer should describe the
 household, not aim at a result). Changed answers are saved as a draft on every step change.
@@ -113,9 +120,15 @@ Icons: `lucide-react` (per the design style guide).
 
 - Same-origin API: always call relative `/api/...` (via `lib/api.js`), never a hard-coded host.
   Session cookie auth relies on this (Vite proxy in dev, nginx in Docker).
-- Current priority: desktop website only, for both roles. Don't build mobile-specific UI or spend
-  time on mobile polish yet; keep the existing responsive bits (sidebar drawer) as they are.
-  Later goal (workspace domain summary): `rt` pages mobile-first, `desa` pages desktop dashboards.
+- Every page must work on a phone (390 px) as well as desktop; the site is hosted and used on mobile.
+  `DataTable` turns rows into label/value cards below `md` (the `aksi` column becomes a button row), `Tabs`
+  scroll sideways, RincianModal has a stacked phone layout. Never let content widen the page: wide
+  content goes in an `overflow-x-auto` box. Check new pages at 390 px (no horizontal page scroll).
+- Hosted on Vercel (separate project from the API): `vercel.json` rewrites `/api/*` to the API project
+  (keeps the session cookie first-party, also on iPhone Safari) and everything else to `index.html`.
+  `lib/api.js` turns network failures and non-JSON platform errors (413, 5xx) into Indonesian messages.
+  Photos are shrunk in the browser before upload (`lib/image.js` compressPhoto: ≤ 1600 px JPEG) because
+  Vercel caps request bodies at 4.5 MB.
 - Code style (owner's preference): avoid long lines that run far to the right. Break objects,
   arrays, function arguments and JSX props one item per line once they hold several items, always
   starting a new line right after the opening `{` / `[` (never `{ icon: X,` on the brace line), e.g.
