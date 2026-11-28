@@ -1,6 +1,6 @@
-export default function PageHeader({ title, description, actions }) {
+export default function PageHeader({ title, description, actions, className = '' }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className={`flex flex-wrap items-end justify-between gap-4 ${className}`}>
       <div>
         <h1 className="text-2xl font-bold">{title}</h1>
         {description && <p className="mt-1 text-sm text-fg-muted">{description}</p>}

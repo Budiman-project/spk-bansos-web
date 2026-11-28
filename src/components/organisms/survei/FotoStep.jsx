@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { ImagePlus, RefreshCw, Trash2 } from 'lucide-react'
 import { api } from '../../../lib/api.js'
+import { compressPhoto } from '../../../lib/image.js'
 import { FOTO_TYPES, JENIS_FOTO, MAX_FOTO_BYTES, fotoUrl } from '../../../lib/survei.js'
 import Button from '../../atoms/Button.jsx'
 import Alert from '../../molecules/Alert.jsx'
@@ -16,16 +17,19 @@ export default function FotoStep({ survei, readOnly, onChanged }) {
 
   const byJenis = Object.fromEntries(survei.foto.map((f) => [f.jenis, f]))
 
-  async function upload(jenis, file) {
+  async function upload(jenis, picked) {
     setError(null)
-    if (!FOTO_TYPES.includes(file.type)) return setError('File harus berupa foto JPEG, PNG, atau WebP')
-    if (file.size > MAX_FOTO_BYTES) return setError('Ukuran foto maksimal 5 MB')
+    if (!FOTO_TYPES.includes(picked.type)) return setError('File harus berupa foto JPEG, PNG, atau WebP')
 
-    const body = new FormData()
-    body.append('jenis', jenis)
-    body.append('file', file)
     setUploading(jenis)
     try {
+      // Phone photos are resized first, so a large camera photo still fits the 5 MB limit
+      const file = await compressPhoto(picked)
+      if (file.size > MAX_FOTO_BYTES) return setError('Ukuran foto maksimal 5 MB')
+
+      const body = new FormData()
+      body.append('jenis', jenis)
+      body.append('file', file)
       await api(`/survei/${survei.id}/foto`, { method: 'POST', body })
       toast.success('Foto berhasil diunggah')
       onChanged()

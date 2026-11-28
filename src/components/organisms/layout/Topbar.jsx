@@ -8,7 +8,9 @@ export default function Topbar({ onOpenMenu }) {
   const roleLabel = ROLE_LABELS[user.role]
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-surface px-4 sm:px-6">
+    <header
+      className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-surface px-4 sm:px-6 print:hidden"
+    >
       <button
         type="button"
         onClick={onOpenMenu}

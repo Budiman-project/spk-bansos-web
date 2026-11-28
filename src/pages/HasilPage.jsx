@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
-import { BadgeCheck, Calculator, Search, Trophy, Users } from 'lucide-react'
+import { BadgeCheck, Calculator, Printer, Search, Trophy, Users } from 'lucide-react'
 import { ROLE_HOME } from '../auth/roles.js'
 import Button from '../components/atoms/Button.jsx'
 import Input from '../components/atoms/Input.jsx'
@@ -19,6 +19,7 @@ import { ATURAN_SERI } from '../lib/perhitungan.js'
 import { periodeOptions, pilihPeriode } from '../lib/periode.js'
 
 const PERHITUNGAN_PATH = `${ROLE_HOME.desa}/perhitungan`
+const LAPORAN_PATH = `${ROLE_HOME.desa}/laporan`
 
 const KEPUTUSAN_OPTIONS = [
   {
@@ -85,13 +86,24 @@ export default function HasilPage() {
       description="Urutan KK berdasarkan nilai preferensi V. KK pada urutan teratas sesuai kuota dinyatakan layak."
       actions={
         periode && (
-          <Select
-            size="sm"
-            value={runParam && run ? String(run.periode.id) : periodeId || String(periode.id)}
-            onChange={changePeriode}
-            aria-label="Pilih periode"
-            options={periodeOptions(periodeList)}
-          />
+          <>
+            <Select
+              size="sm"
+              value={runParam && run ? String(run.periode.id) : periodeId || String(periode.id)}
+              onChange={changePeriode}
+              aria-label="Pilih periode"
+              options={periodeOptions(periodeList)}
+            />
+            {run?.terbaru && (
+              <Button
+                variant="secondary"
+                icon={Printer}
+                onClick={() => navigate(`${LAPORAN_PATH}?periode=${run.periode.id}`)}
+              >
+                Cetak Laporan
+              </Button>
+            )}
+          </>
         )
       }
     >
